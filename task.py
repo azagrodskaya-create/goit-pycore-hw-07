@@ -92,10 +92,17 @@ class AddressBook(UserDict):
         for record in self.data.values(): # Проходимо по всіх записах у адресній книзі
             if record.birthday:
                 bday = record.birthday.value
-                birthday_this_year = bday.replace(year=today.year) # Створюємо дату дня народження для поточного року
+
+                try:
+                    birthday_this_year = bday.replace(year=today.year) # Створюємо дату для поточного року, використовуючи день і місяць з дати народження
+                except ValueError:
+                    birthday_this_year = bday.replace(year=today.year, month=3, day=1) # Якщо 29.02 не існує в цьому році, переносимо на 01.03 
 
                 if birthday_this_year < today:
-                    birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+                    try:
+                        birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+                    except ValueError:
+                        birthday_this_year = birthday_this_year.replace(year=today.year + 1, month=3, day=1)
 
                 if 0 <= (birthday_this_year - today).days <= 7:
                     congrats_date = birthday_this_year # Якщо день народження наступає протягом наступних 7 днів, визначаємо дату для привітання (сам день народження або наступний робочий день, якщо він припадає на вихідні)
